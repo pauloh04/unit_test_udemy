@@ -9,7 +9,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 
 import br.com.paulo.entidades.Filme;
 import br.com.paulo.entidades.Locacao;
@@ -17,6 +19,9 @@ import br.com.paulo.entidades.Usuario;
 import br.com.paulo.utils.DataUtils;
 
 public class LocacaoServiceTest {
+
+	@Rule
+	public ErrorCollector error = new ErrorCollector();
 	
 	@Test
 	public void teste() {
@@ -40,5 +45,9 @@ public class LocacaoServiceTest {
 		assertThat(locacao.getValor(), not(equalTo(6.0)));
 		assertThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
 		assertThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), is(true));
+		
+		// ErrorColletor
+		error.checkThat(locacao.getValor(), is(5.0));
+		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
 	}
 }
