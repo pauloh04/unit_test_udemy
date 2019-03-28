@@ -1,6 +1,10 @@
 package br.com.paulo.servicos;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
@@ -28,5 +32,13 @@ public class LocacaoServiceTest {
 		assertEquals(5.0, locacao.getValor(), 0.01);
 		assertTrue(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()));
 		assertTrue(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)));
+		
+		// CoreMatcher
+		assertThat(locacao.getValor(), is(5.0));
+		assertThat(locacao.getValor(), is(equalTo(5.0)));
+		assertThat(locacao.getValor(), not(6.0));
+		assertThat(locacao.getValor(), not(equalTo(6.0)));
+		assertThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+		assertThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), is(true));
 	}
 }
