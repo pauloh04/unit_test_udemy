@@ -1,0 +1,5 @@
+br/com/paulo/entidades/Locacao.class
+br/com/paulo/entidades/Filme.class
+br/com/paulo/servicos/LocacaoService.class
+br/com/paulo/entidades/Usuario.class
+br/com/paulo/utils/DataUtils.class
