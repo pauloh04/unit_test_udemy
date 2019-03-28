@@ -3,6 +3,7 @@ package br.com.paulo.servicos;
 import static br.com.paulo.utils.DataUtils.adicionarDias;
 
 import java.util.Date;
+import java.util.List;
 
 import br.com.paulo.entidades.Filme;
 import br.com.paulo.entidades.Locacao;
@@ -10,16 +11,26 @@ import br.com.paulo.entidades.Usuario;
 
 public class LocacaoService {
 	
-	public Locacao alugarFilme(Usuario usuario, Filme filme) throws Exception {
-		
-		if(filme.getEstoque() == 0) {
-			throw new Exception("Filme sem estoque");
+	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws Exception {
+
+		for (Filme filme : filmes) {
+			if(filme.getEstoque() == 0) {
+				throw new Exception("Filme sem estoque");
+			}
 		}
+
+		
+		
 		Locacao locacao = new Locacao();
-		locacao.setFilme(filme);
+		locacao.setFilmes(filmes);
 		locacao.setUsuario(usuario);
 		locacao.setDataLocacao(new Date());
-		locacao.setValor(filme.getPrecoLocacao());
+		
+		Double valor = 0d;
+		for (Filme filme : filmes) {
+			valor += filme.getPrecoLocacao();
+		}
+		locacao.setValor(valor);
 
 		//Entrega no dia seguinte
 		Date dataEntrega = new Date();
