@@ -1,5 +1,6 @@
 package br.com.paulo.servicos;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -10,6 +11,8 @@ import static org.junit.Assert.fail;
 
 import java.util.Date;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -22,16 +25,27 @@ import br.com.paulo.utils.DataUtils;
 
 public class LocacaoServiceTest {
 
+	private LocacaoService service;
+	
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
 
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
+
+	@Before
+	public void setup() {
+		service = new LocacaoService();
+	}
+
+	@BeforeClass
+	public static void setupClass() {
+		// TODO
+	}
 	
 	@Test
 	public void testeLocacao() throws Exception {
 		// cenario
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 2, 5.0);
 
@@ -59,7 +73,6 @@ public class LocacaoServiceTest {
 	@Test(expected = Exception.class)
 	public void testeLocacao_SemEstoque() throws Exception {
 		// cenario
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 0, 5.0);
 
@@ -70,7 +83,6 @@ public class LocacaoServiceTest {
 	@Test
 	public void testeLocacao_SemEstoque_2() {
 		// cenario
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 0, 5.0);
 
@@ -86,7 +98,6 @@ public class LocacaoServiceTest {
 	@Test
 	public void testeLocacao_SemEstoque_3() throws Exception {
 		// cenario
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 0, 5.0);
 
