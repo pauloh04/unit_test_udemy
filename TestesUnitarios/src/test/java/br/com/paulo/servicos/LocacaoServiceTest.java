@@ -13,6 +13,7 @@ import java.util.Date;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.junit.rules.ExpectedException;
 
 import br.com.paulo.entidades.Filme;
 import br.com.paulo.entidades.Locacao;
@@ -24,6 +25,9 @@ public class LocacaoServiceTest {
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
 
+	@Rule
+	public ExpectedException exception = ExpectedException.none();
+	
 	@Test
 	public void testeLocacao() throws Exception {
 		// cenario
@@ -75,8 +79,22 @@ public class LocacaoServiceTest {
 			service.alugarFilme(usuario, filme);
 			fail("Deveria lancar uma excecao");
 		} catch (Exception e) {
-//			assertEquals("Filme sem estoque", e.getMessage());
 			assertThat(e.getMessage(), is("Filme sem estoque"));
 		}
+	}
+	
+	@Test
+	public void testeLocacao_SemEstoque_3() throws Exception {
+		// cenario
+		LocacaoService service = new LocacaoService();
+		Usuario usuario = new Usuario("Usuario 1");
+		Filme filme = new Filme("Filme 1", 0, 5.0);
+
+		// excecao esperada
+		exception.expect(Exception.class);
+		exception.expectMessage("Filme sem estoque");
+		
+		// acao
+		service.alugarFilme(usuario, filme);
 	}
 }
