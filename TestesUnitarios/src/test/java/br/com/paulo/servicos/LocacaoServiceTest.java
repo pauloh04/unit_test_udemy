@@ -2,6 +2,8 @@ package br.com.paulo.servicos;
 
 import static br.com.paulo.builders.FilmeBuilder.umFilme;
 import static br.com.paulo.builders.LocacaoBuilder.umLocacao;
+import static br.com.paulo.matchers.MatcherProprios.ehHoje;
+import static br.com.paulo.matchers.MatcherProprios.ehHojeComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -29,6 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -170,7 +173,7 @@ public class LocacaoServiceTest {
 	
 //	@Test(expected = Exception.class)
 	@Test
-	public void naoDeveAlugarFilmeParaNegativadoSPC(){
+	public void naoDeveAlugarFilmeParaNegativadoSPC() throws Exception{
 		List<Filme> filmes = Arrays.asList(umFilme().agora());
 		
 		when(spcService.possuiNegativacao(any(Usuario.class))).thenReturn(true);
@@ -205,5 +208,32 @@ public class LocacaoServiceTest {
 		verify(emailService, atLeastOnce()).notificarAtraso(usuario3);
 		verify(emailService, never()).notificarAtraso(usuario2);
 		verifyNoMoreInteractions(emailService);
+	}
+	
+	@Test
+	public void deveTratarErroNoSPC() throws Exception {
+		List<Filme> filmes = Arrays.asList(umFilme().agora());
+		
+		when(spcService.possuiNegativacao(any(Usuario.class))).thenThrow(new Exception("Falha"));
+		
+		exception.expect(Exception.class);
+		exception.expectMessage("Falha");
+		
+		service.alugarFilme(usuario, filmes);
+	}
+	
+	@Test
+	public void deveProrrogarNovaLocacao() {
+		Locacao locacao = umLocacao().agora();
+		
+		service.prorrogarLocacao(locacao, 3);
+		
+		ArgumentCaptor<Locacao> argumentCaptor = ArgumentCaptor.forClass(Locacao.class);
+		verify(locacaoDAO).salvar(argumentCaptor.capture());
+		Locacao locacaoRetornada = argumentCaptor.getValue();
+		
+		error.checkThat(locacaoRetornada.getValor(), is(12.0));
+		error.checkThat(locacaoRetornada.getDataLocacao(), is(ehHoje()));
+		error.checkThat(locacaoRetornada.getDataRetorno(), is(ehHojeComDiferencaDias(3)));
 	}
 }
