@@ -2,12 +2,14 @@ package br.com.paulo.servicos;
 
 import static br.com.paulo.utils.DataUtils.adicionarDias;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import br.com.paulo.entidades.Filme;
 import br.com.paulo.entidades.Locacao;
 import br.com.paulo.entidades.Usuario;
+import br.com.paulo.utils.DataUtils;
 
 public class LocacaoService {
 
@@ -50,6 +52,10 @@ public class LocacaoService {
 		// Entrega no dia seguinte
 		Date dataEntrega = new Date();
 		dataEntrega = adicionarDias(dataEntrega, 1);
+		
+		if(DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY))
+			dataEntrega = adicionarDias(dataEntrega, 1);
+		
 		locacao.setDataRetorno(dataEntrega);
 
 		// Salvando a locacao...

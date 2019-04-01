@@ -9,9 +9,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -48,6 +50,9 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void testeLocacao() throws Exception {
+		
+		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		
 		// cenario
 
 		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
@@ -165,5 +170,14 @@ public class LocacaoServiceTest {
 		
 		// 4 + 4 + 3 + 2 + 1 + 0 = d
 		assertThat(locacao.getValor(), is(14d));
+	}
+
+	@Test
+	public void naoDeveDevolverFilmeNoDomingo() throws Exception {
+		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0));
+		Locacao locacao = service.alugarFilme(usuario, filmes);
+		assertTrue(DataUtils.verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY));
 	}
 }
