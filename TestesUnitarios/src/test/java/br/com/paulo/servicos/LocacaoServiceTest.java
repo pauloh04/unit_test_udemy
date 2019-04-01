@@ -126,4 +126,16 @@ public class LocacaoServiceTest {
 //		assertThat(locacao.getDataRetorno(), MatcherProprios.caiEm(Calendar.TUESDAY));
 		assertThat(locacao.getDataRetorno(), MatcherProprios.caiNumaSegunda());
 	}
+	
+
+	@Test
+	public void deveAlugarFilme() throws Exception {
+//		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0));
+		Locacao locacao = service.alugarFilme(usuario, filmes);
+		
+		error.checkThat(locacao.getDataLocacao(), MatcherProprios.ehHoje());
+//		error.checkThat(locacao.getDataLocacao(), MatcherProprios.ehHojeComDiferencaDias(1));
+	}
 }
