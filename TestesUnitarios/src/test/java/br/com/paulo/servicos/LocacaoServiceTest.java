@@ -21,6 +21,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 import br.com.paulo.builders.UsuarioBuilder;
 import br.com.paulo.dao.LocacaoDAO;
@@ -46,7 +47,8 @@ public class LocacaoServiceTest {
 	public void setup() {
 		service = new LocacaoService();
 		usuario = UsuarioBuilder.umUsuario().agora();
-		LocacaoDAO locacaoDAO = new LocacaoDAOFake();
+//		LocacaoDAO locacaoDAO = new LocacaoDAOFake(); // Fake object
+		LocacaoDAO locacaoDAO = Mockito.mock(LocacaoDAO.class); // Mockito
 		service.setLocacaoDAO(locacaoDAO);
 	}
 
