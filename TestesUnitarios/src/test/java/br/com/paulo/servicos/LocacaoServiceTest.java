@@ -2,7 +2,6 @@ package br.com.paulo.servicos;
 
 import static br.com.paulo.builders.FilmeBuilder.umFilme;
 import static br.com.paulo.builders.LocacaoBuilder.umLocacao;
-import static br.com.paulo.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -10,7 +9,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -25,7 +29,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import br.com.paulo.builders.UsuarioBuilder;
 import br.com.paulo.dao.LocacaoDAO;
@@ -37,10 +43,15 @@ import br.com.paulo.utils.DataUtils;
 
 public class LocacaoServiceTest {
 
+	@InjectMocks
 	private LocacaoService service;
 	private Usuario usuario;
+	
+	@Mock
 	private SPCService spcService;
+	@Mock
 	private LocacaoDAO locacaoDAO;
+	@Mock
 	private EmailService emailService;
 
 	@Rule
@@ -51,15 +62,16 @@ public class LocacaoServiceTest {
 
 	@Before
 	public void setup() {
-		service = new LocacaoService();
-		usuario = UsuarioBuilder.umUsuario().agora();
-//		LocacaoDAO locacaoDAO = new LocacaoDAOFake(); // Fake object
-		locacaoDAO = Mockito.mock(LocacaoDAO.class); // Mockito
-		service.setLocacaoDAO(locacaoDAO);
-		spcService = Mockito.mock(SPCService.class);
-		service.setSPCService(spcService);
-		emailService = Mockito.mock(EmailService.class);
-		service.setEmailService(emailService);
+		MockitoAnnotations.initMocks(this);
+//		service = new LocacaoService();
+//		usuario = UsuarioBuilder.umUsuario().agora();
+////		LocacaoDAO locacaoDAO = new LocacaoDAOFake(); // Fake object
+//		locacaoDAO = Mockito.mock(LocacaoDAO.class); // Mockito
+//		service.setLocacaoDAO(locacaoDAO);
+//		spcService = Mockito.mock(SPCService.class);
+//		service.setSPCService(spcService);
+//		emailService = Mockito.mock(EmailService.class);
+//		service.setEmailService(emailService);
 	}
 
 	@BeforeClass
@@ -158,25 +170,40 @@ public class LocacaoServiceTest {
 	
 //	@Test(expected = Exception.class)
 	@Test
-	public void naoDeveAlugarFilmeParaNegativadoSPC() throws Exception {
+	public void naoDeveAlugarFilmeParaNegativadoSPC(){
 		List<Filme> filmes = Arrays.asList(umFilme().agora());
 		
-		when(spcService.possuiNegativacao(usuario)).thenReturn(true);
+		when(spcService.possuiNegativacao(any(Usuario.class))).thenReturn(true);
 		
-		// excecao esperada
-		exception.expect(Exception.class);
-		exception.expectMessage("Usuario negativado");
-				
-		service.alugarFilme(usuario, filmes);
+		try {
+			service.alugarFilme(usuario, filmes);
+			fail();
+		} catch (Exception e) {
+			assertThat(e.getMessage(), is("Usuario negativado"));
+		}
+		
+		verify(spcService).possuiNegativacao(usuario);
 	}
 	
 	@Test
 	public void deveEnviarEmailParaLocacoesAtrasadas() {
-		List<Locacao> listLocacao = Arrays.asList(umLocacao().comUsuario(usuario).comDataRetorno(obterDataComDiferencaDias(-2)).agora());
+		Usuario usuario2 = UsuarioBuilder.umUsuario().comNome("Usuario 2").agora();
+		Usuario usuario3 = UsuarioBuilder.umUsuario().comNome("Usuario 3").agora();
+		
+		List<Locacao> listLocacao = Arrays.asList(
+				umLocacao().atrasado().comUsuario(usuario).agora(),
+				umLocacao().comUsuario(usuario2).agora(),
+				umLocacao().atrasado().comUsuario(usuario3).agora(),
+				umLocacao().atrasado().comUsuario(usuario3).agora()
+				);
 		when(locacaoDAO.obterLocacoesPendentes()).thenReturn(listLocacao);
 		
 		service.notificarAtrasos();
 		
+		verify(emailService, times(3)).notificarAtraso(any(Usuario.class));
 		verify(emailService).notificarAtraso(usuario);
+		verify(emailService, atLeastOnce()).notificarAtraso(usuario3);
+		verify(emailService, never()).notificarAtraso(usuario2);
+		verifyNoMoreInteractions(emailService);
 	}
 }

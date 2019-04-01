@@ -2,6 +2,7 @@ package br.com.paulo.builders;
 
 import static br.com.paulo.builders.FilmeBuilder.umFilme;
 import static br.com.paulo.builders.UsuarioBuilder.umUsuario;
+import static br.com.paulo.utils.DataUtils.obterDataComDiferencaDias;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -51,6 +52,12 @@ public class LocacaoBuilder {
 
 	public LocacaoBuilder comDataRetorno(Date param) {
 		elemento.setDataRetorno(param);
+		return this;
+	}
+	
+	public LocacaoBuilder atrasado() {
+		elemento.setDataLocacao(obterDataComDiferencaDias(-4));
+		elemento.setDataRetorno(obterDataComDiferencaDias(-2));
 		return this;
 	}
 
