@@ -1,5 +1,7 @@
 
 
+import static br.com.paulo.builders.UsuarioBuilder.umUsuario;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,8 +28,8 @@ public class AssertTest {
 		Assert.assertTrue("bola".equalsIgnoreCase("Bola"));
 		Assert.assertTrue("bola".startsWith("bo"));
 
-		Usuario u1 = new Usuario("Usuario 1");
-		Usuario u2 = new Usuario("Usuario 1");
+		Usuario u1 = umUsuario().agora();
+		Usuario u2 = umUsuario().agora();
 		Usuario u3 = null;
 
 		Assert.assertEquals(u1, u2);

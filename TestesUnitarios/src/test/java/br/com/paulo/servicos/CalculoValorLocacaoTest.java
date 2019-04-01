@@ -1,5 +1,7 @@
 package br.com.paulo.servicos;
 
+import static br.com.paulo.builders.FilmeBuilder.umFilme;
+import static br.com.paulo.builders.UsuarioBuilder.umUsuario;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -34,15 +36,15 @@ public class CalculoValorLocacaoTest {
 	@Before
 	public void setup() {
 		service = new LocacaoService();
-		usuario = new Usuario("Usuario 1");
+		usuario = umUsuario().agora();
 	}
 	
-	private static Filme filme1 = new Filme("Filme 1", 1, 4.0);
-	private static Filme filme2 = new Filme("Filme 2", 1, 4.0);
-	private static Filme filme3 = new Filme("Filme 3", 1, 4.0);
-	private static Filme filme4 = new Filme("Filme 4", 1, 4.0);
-	private static Filme filme5 = new Filme("Filme 5", 1, 4.0);
-	private static Filme filme6 = new Filme("Filme 6", 1, 4.0);
+	private static Filme filme1 = umFilme().agora();
+	private static Filme filme2 = umFilme().agora();
+	private static Filme filme3 = umFilme().agora();
+	private static Filme filme4 = umFilme().agora();
+	private static Filme filme5 = umFilme().agora();
+	private static Filme filme6 = umFilme().agora();
 	
 	@Parameters
 	public static Collection<Object[]> getParametros(){

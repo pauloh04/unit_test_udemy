@@ -1,5 +1,6 @@
 package br.com.paulo.servicos;
 
+import static br.com.paulo.builders.FilmeBuilder.umFilme;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -21,6 +22,7 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
+import br.com.paulo.builders.UsuarioBuilder;
 import br.com.paulo.entidades.Filme;
 import br.com.paulo.entidades.Locacao;
 import br.com.paulo.entidades.Usuario;
@@ -41,7 +43,7 @@ public class LocacaoServiceTest {
 	@Before
 	public void setup() {
 		service = new LocacaoService();
-		usuario = new Usuario("Usuario 1");
+		usuario = UsuarioBuilder.umUsuario().agora();
 	}
 
 	@BeforeClass
@@ -56,7 +58,7 @@ public class LocacaoServiceTest {
 		
 		// cenario
 
-		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
+		List<Filme> filmes = Arrays.asList(umFilme().semEstoque().agora());
 
 		// acao
 		Locacao locacao = service.alugarFilme(usuario, filmes);
@@ -82,7 +84,7 @@ public class LocacaoServiceTest {
 	@Test(expected = Exception.class)
 	public void testeLocacao_SemEstoque() throws Exception {
 		// cenario
-		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 0, 5.0));
+		List<Filme> filmes = Arrays.asList(umFilme().agora());
 
 		// acao
 		service.alugarFilme(usuario, filmes);
@@ -91,7 +93,7 @@ public class LocacaoServiceTest {
 	@Test
 	public void testeLocacao_SemEstoque_2() {
 		// cenario
-		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 0, 5.0));
+		List<Filme> filmes = Arrays.asList(umFilme().agora());
 
 		// acao
 		try {
@@ -105,7 +107,7 @@ public class LocacaoServiceTest {
 	@Test
 	public void testeLocacao_SemEstoque_3() throws Exception {
 		// cenario
-		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 0, 5.0));
+		List<Filme> filmes = Arrays.asList(umFilme().agora());
 
 		// excecao esperada
 		exception.expect(Exception.class);
@@ -119,7 +121,7 @@ public class LocacaoServiceTest {
 	public void naoDeveDevolverFilmeNoDomingo() throws Exception {
 		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 		
-		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0));
+		List<Filme> filmes = Arrays.asList(umFilme().agora());
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 //		assertTrue(DataUtils.verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY));
 //		assertThat(locacao.getDataRetorno(), new DiaSemanaMatcher(Calendar.MONDAY));
@@ -131,7 +133,7 @@ public class LocacaoServiceTest {
 	public void deveAlugarFilme() throws Exception {
 //		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 		
-		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0));
+		List<Filme> filmes = Arrays.asList(umFilme().agora());
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 		
 		error.checkThat(locacao.getDataLocacao(), MatcherProprios.ehHoje());
