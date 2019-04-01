@@ -1,6 +1,8 @@
 package br.com.paulo.servicos;
 
 import static br.com.paulo.builders.FilmeBuilder.umFilme;
+import static br.com.paulo.builders.LocacaoBuilder.umLocacao;
+import static br.com.paulo.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -8,6 +10,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -25,7 +29,6 @@ import org.mockito.Mockito;
 
 import br.com.paulo.builders.UsuarioBuilder;
 import br.com.paulo.dao.LocacaoDAO;
-import br.com.paulo.dao.LocacaoDAOFake;
 import br.com.paulo.entidades.Filme;
 import br.com.paulo.entidades.Locacao;
 import br.com.paulo.entidades.Usuario;
@@ -36,6 +39,9 @@ public class LocacaoServiceTest {
 
 	private LocacaoService service;
 	private Usuario usuario;
+	private SPCService spcService;
+	private LocacaoDAO locacaoDAO;
+	private EmailService emailService;
 
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
@@ -48,8 +54,12 @@ public class LocacaoServiceTest {
 		service = new LocacaoService();
 		usuario = UsuarioBuilder.umUsuario().agora();
 //		LocacaoDAO locacaoDAO = new LocacaoDAOFake(); // Fake object
-		LocacaoDAO locacaoDAO = Mockito.mock(LocacaoDAO.class); // Mockito
+		locacaoDAO = Mockito.mock(LocacaoDAO.class); // Mockito
 		service.setLocacaoDAO(locacaoDAO);
+		spcService = Mockito.mock(SPCService.class);
+		service.setSPCService(spcService);
+		emailService = Mockito.mock(EmailService.class);
+		service.setEmailService(emailService);
 	}
 
 	@BeforeClass
@@ -144,5 +154,29 @@ public class LocacaoServiceTest {
 		
 		error.checkThat(locacao.getDataLocacao(), MatcherProprios.ehHoje());
 //		error.checkThat(locacao.getDataLocacao(), MatcherProprios.ehHojeComDiferencaDias(1));
+	}
+	
+//	@Test(expected = Exception.class)
+	@Test
+	public void naoDeveAlugarFilmeParaNegativadoSPC() throws Exception {
+		List<Filme> filmes = Arrays.asList(umFilme().agora());
+		
+		when(spcService.possuiNegativacao(usuario)).thenReturn(true);
+		
+		// excecao esperada
+		exception.expect(Exception.class);
+		exception.expectMessage("Usuario negativado");
+				
+		service.alugarFilme(usuario, filmes);
+	}
+	
+	@Test
+	public void deveEnviarEmailParaLocacoesAtrasadas() {
+		List<Locacao> listLocacao = Arrays.asList(umLocacao().comUsuario(usuario).comDataRetorno(obterDataComDiferencaDias(-2)).agora());
+		when(locacaoDAO.obterLocacoesPendentes()).thenReturn(listLocacao);
+		
+		service.notificarAtrasos();
+		
+		verify(emailService).notificarAtraso(usuario);
 	}
 }

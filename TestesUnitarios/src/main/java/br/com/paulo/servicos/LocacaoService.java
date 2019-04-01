@@ -14,7 +14,9 @@ import br.com.paulo.utils.DataUtils;
 
 public class LocacaoService {
 
-	public LocacaoDAO locacaoDAO;
+	private LocacaoDAO locacaoDAO;
+	private SPCService spcService;
+	private EmailService emailService;
 	
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws Exception {
 
@@ -24,6 +26,9 @@ public class LocacaoService {
 			}
 		}
 
+		if(spcService.possuiNegativacao(usuario))
+			throw new Exception("Usuario negativado");
+		
 		Locacao locacao = new Locacao();
 		locacao.setFilmes(filmes);
 		locacao.setUsuario(usuario);
@@ -66,8 +71,24 @@ public class LocacaoService {
 
 		return locacao;
 	}
+
+	public void notificarAtrasos() {
+		List<Locacao> listLocacoes = locacaoDAO.obterLocacoesPendentes();
+		
+		for (Locacao locacao : listLocacoes) {
+			emailService.notificarAtraso(locacao.getUsuario());
+		}
+	}
 	
 	public void setLocacaoDAO(LocacaoDAO locacaoDAO) {
 		this.locacaoDAO = locacaoDAO;
+	}
+	
+	public void setSPCService(SPCService spcService) {
+		this.spcService = spcService;
+	}
+	
+	public void setEmailService(EmailService emailService) {
+		this.emailService = emailService;
 	}
 }

@@ -18,7 +18,6 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mockito;
 
 import br.com.paulo.dao.LocacaoDAO;
-import br.com.paulo.dao.LocacaoDAOFake;
 import br.com.paulo.entidades.Filme;
 import br.com.paulo.entidades.Locacao;
 import br.com.paulo.entidades.Usuario;
@@ -27,8 +26,9 @@ import br.com.paulo.entidades.Usuario;
 public class CalculoValorLocacaoTest {
 
 	private LocacaoService service;
-
 	private Usuario usuario;
+	private SPCService spcService;
+	private LocacaoDAO locacaoDAO;
 
 	@Parameter
 	public List<Filme> filmes;
@@ -41,8 +41,10 @@ public class CalculoValorLocacaoTest {
 		service = new LocacaoService();
 		usuario = umUsuario().agora();
 //		LocacaoDAO locacaoDAO = new LocacaoDAOFake(); // Fake object 
-		LocacaoDAO locacaoDAO = Mockito.mock(LocacaoDAO.class); // Mockito
+		locacaoDAO = Mockito.mock(LocacaoDAO.class); // Mockito
 		service.setLocacaoDAO(locacaoDAO);
+		spcService = Mockito.mock(SPCService.class);
+		service.setSPCService(spcService);
 	}
 	
 	private static Filme filme1 = umFilme().agora();
