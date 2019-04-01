@@ -18,6 +18,11 @@ public class FilmeBuilder {
 		return builder;
 	}
 	
+	public FilmeBuilder preco5() {
+		filme.setPrecoLocacao(5.0);
+		return this;
+	}
+	
 	public FilmeBuilder semEstoque() {
 		filme.setEstoque(0);
 		return this;

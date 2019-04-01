@@ -10,6 +10,7 @@ import br.com.paulo.entidades.Filme;
 import br.com.paulo.entidades.Locacao;
 import br.com.paulo.entidades.Usuario;
 import br.com.paulo.utils.DataUtils;
+import buildermaster.BuilderMaster;
 
 public class LocacaoService {
 
@@ -62,5 +63,9 @@ public class LocacaoService {
 		// TODO adicionar método para salvar
 
 		return locacao;
+	}
+	
+	public static void main(String[] args) {
+		new BuilderMaster().gerarCodigoClasse(Locacao.class);
 	}
 }
