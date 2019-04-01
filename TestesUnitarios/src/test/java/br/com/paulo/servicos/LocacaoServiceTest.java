@@ -23,6 +23,8 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
 import br.com.paulo.builders.UsuarioBuilder;
+import br.com.paulo.dao.LocacaoDAO;
+import br.com.paulo.dao.LocacaoDAOFake;
 import br.com.paulo.entidades.Filme;
 import br.com.paulo.entidades.Locacao;
 import br.com.paulo.entidades.Usuario;
@@ -44,6 +46,8 @@ public class LocacaoServiceTest {
 	public void setup() {
 		service = new LocacaoService();
 		usuario = UsuarioBuilder.umUsuario().agora();
+		LocacaoDAO locacaoDAO = new LocacaoDAOFake();
+		service.setLocacaoDAO(locacaoDAO);
 	}
 
 	@BeforeClass

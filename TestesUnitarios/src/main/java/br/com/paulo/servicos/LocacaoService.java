@@ -6,14 +6,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import br.com.paulo.dao.LocacaoDAO;
 import br.com.paulo.entidades.Filme;
 import br.com.paulo.entidades.Locacao;
 import br.com.paulo.entidades.Usuario;
 import br.com.paulo.utils.DataUtils;
-import buildermaster.BuilderMaster;
 
 public class LocacaoService {
 
+	public LocacaoDAO locacaoDAO;
+	
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws Exception {
 
 		for (Filme filme : filmes) {
@@ -60,12 +62,12 @@ public class LocacaoService {
 		locacao.setDataRetorno(dataEntrega);
 
 		// Salvando a locacao...
-		// TODO adicionar método para salvar
+		locacaoDAO.salvar(locacao);
 
 		return locacao;
 	}
 	
-	public static void main(String[] args) {
-		new BuilderMaster().gerarCodigoClasse(Locacao.class);
+	public void setLocacaoDAO(LocacaoDAO locacaoDAO) {
+		this.locacaoDAO = locacaoDAO;
 	}
 }
