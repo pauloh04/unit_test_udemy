@@ -3,11 +3,15 @@ package br.com.paulo.servicos;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import br.com.paulo.exception.NaoPodeDividirPorZeroException;
+import br.com.paulo.runners.ParallelRunner;
 
+@RunWith(ParallelRunner.class)
 public class CalculadoraTest {
 
 	private Calculadora calc;
@@ -15,8 +19,14 @@ public class CalculadoraTest {
 	@Before
 	public void setup() {
 		calc = new Calculadora();
+		System.out.println("iniciando...");
 	}
 
+	@After
+	public void teatDown() {
+		System.out.println("finalizando...");
+	}
+	
 	@Test
 	public void deveSomarDoisValores() {
 		double a = 5d;

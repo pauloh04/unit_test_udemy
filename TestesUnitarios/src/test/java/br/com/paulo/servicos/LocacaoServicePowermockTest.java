@@ -108,7 +108,7 @@ public class LocacaoServicePowermockTest {
 		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
 	}
 
-	@Test
+	//@Test
 	public void naoDeveDevolverFilmeNoDomingo() throws Exception {
 		List<Filme> filmes = Arrays.asList(umFilme().agora());
 		
