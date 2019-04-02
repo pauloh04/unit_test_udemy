@@ -31,10 +31,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import br.com.paulo.builders.UsuarioBuilder;
 import br.com.paulo.dao.LocacaoDAO;
@@ -44,6 +48,8 @@ import br.com.paulo.entidades.Usuario;
 import br.com.paulo.matchers.MatcherProprios;
 import br.com.paulo.utils.DataUtils;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(LocacaoService.class)
 public class LocacaoServiceTest {
 
 	@InjectMocks
@@ -148,11 +154,12 @@ public class LocacaoServiceTest {
 		service.alugarFilme(usuario, filmes);
 	}
 
-//	@Test
+	@Test
 	public void naoDeveDevolverFilmeNoDomingo() throws Exception {
-		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-		
 		List<Filme> filmes = Arrays.asList(umFilme().agora());
+		
+		PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(29, 4, 2017));
+		
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 //		assertTrue(DataUtils.verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY));
 //		assertThat(locacao.getDataRetorno(), new DiaSemanaMatcher(Calendar.MONDAY));
@@ -160,7 +167,7 @@ public class LocacaoServiceTest {
 		assertThat(locacao.getDataRetorno(), MatcherProprios.caiNumaSegunda());
 	}
 
-//	@Test
+	@Test
 	public void deveAlugarFilme() throws Exception {
 //		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 		
