@@ -1,5 +1,11 @@
-br/com/paulo/entidades/Locacao.class
-br/com/paulo/entidades/Filme.class
+br/com/paulo/exception/NaoPodeDividirPorZeroException.class
 br/com/paulo/servicos/LocacaoService.class
 br/com/paulo/entidades/Usuario.class
+br/com/paulo/servicos/SPCService.class
+br/com/paulo/servicos/Calculadora.class
+br/com/paulo/entidades/Locacao.class
+br/com/paulo/entidades/Filme.class
+br/com/paulo/dao/LocacaoDAOFake.class
 br/com/paulo/utils/DataUtils.class
+br/com/paulo/servicos/EmailService.class
+br/com/paulo/dao/LocacaoDAO.class

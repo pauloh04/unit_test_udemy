@@ -25,6 +25,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -38,6 +40,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+
 import br.com.paulo.builders.UsuarioBuilder;
 import br.com.paulo.dao.LocacaoDAO;
 import br.com.paulo.entidades.Filme;
@@ -79,11 +82,23 @@ public class LocacaoServiceTest {
 //		service.setSPCService(spcService);
 //		emailService = Mockito.mock(EmailService.class);
 //		service.setEmailService(emailService);
+		System.out.println("iniciando 2");
+		CalculadoraTest.ordem.append("2");
 	}
 
+	@After
+	public void tearDown() {
+		System.out.println("finalizando 2");
+	}
+	
 	@BeforeClass
 	public static void setupClass() {
 		// TODO
+	}
+	
+	@AfterClass
+	public static void tearDownClass() {
+		System.out.println(CalculadoraTest.ordem.toString());
 	}
 
 	@Test

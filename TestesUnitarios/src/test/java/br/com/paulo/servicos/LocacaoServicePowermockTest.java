@@ -13,6 +13,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -71,6 +73,8 @@ public class LocacaoServicePowermockTest {
 //		service.setSPCService(spcService);
 //		emailService = Mockito.mock(EmailService.class);
 //		service.setEmailService(emailService);
+		System.out.println("iniciando 4");
+		CalculadoraTest.ordem.append("4");
 	}
 
 	@BeforeClass
@@ -78,6 +82,16 @@ public class LocacaoServicePowermockTest {
 		// TODO
 	}
 
+	@After
+	public void teatDown() {
+		System.out.println("finalizando 4...");
+	}
+	
+	@AfterClass
+	public static void tearDownClass() {
+		System.out.println(CalculadoraTest.ordem.toString());
+	}
+	
 	@Test
 	public void testeLocacao() throws Exception {
 		
