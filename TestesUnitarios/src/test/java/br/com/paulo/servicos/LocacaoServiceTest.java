@@ -39,6 +39,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import br.com.paulo.builders.UsuarioBuilder;
 import br.com.paulo.dao.LocacaoDAO;
@@ -262,4 +263,13 @@ public class LocacaoServiceTest {
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 		assertThat(locacao.getValor(), is(1.0));
 	}
+	
+	@Test
+	public void deveCalcularValorLocacao() throws Exception {
+		List<Filme> filmes = Arrays.asList(umFilme().agora());
+
+		Double valor = (Double) Whitebox.invokeMethod(service, "calcularValorLocacao", filmes);
+		
+		assertThat(valor, is(4.0));
+	}	
 }
